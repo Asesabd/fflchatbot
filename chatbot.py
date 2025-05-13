@@ -7,6 +7,7 @@ def hasonlo(kifejezes, lehetosegek, kuszob=85):
             return True
     return False
 
+
 def valaszolo_bot(kerdes):
     kerdes = kerdes.lower()
 
@@ -21,20 +22,38 @@ def valaszolo_bot(kerdes):
             "https://www.elelmiszerbank.hu/hu/tevekenysegunk/hova_kerulnek_a_megmentett_elelmiszerek.html"
         )
 
-    if hasonlo(kerdes, ["szia", "helló", "hello", "üdv", "jó napot", "jó reggelt"]):
+    elif hasonlo(kerdes, ["szia", "helló", "hello", "üdv", "jó napot", "jó reggelt"]):
         return "Szia! Örülök, hogy írtál! Miben segíthetek?"
-
-    if hasonlo(kerdes, ["küldenétek", "küldjetek", "küldjetek nekem", "ide is küldjetek", "miért nem küldtök", "nem kaptam", "hoznátok", "hozzatok"]):
-        return (
-            "Missziónk jelenleg az ételosztó pontokon való szolgáltatásra korlátozódik. "
-            "Nem tudunk csomagot küldeni vagy postázni. Tájékozódj itt: "
-            "https://www.elelmiszerbank.hu/hu/tevekenysegunk/hova_kerulnek_a_megmentett_elelmiszerek.html"
-        )
 
     elif hasonlo(kerdes, ["hol van osztás", "hol lesz osztás", "hol lehet ételhez jutni"]):
         return (
-            "Budapesten és 3 vidéki városban van rendszeres osztás: Egerben, Somogyvámoson hétköznapokon, "
+            "Budapesten és 3 vidéki városban van rendszeres osztás: Egerben, Marcaliban hétköznapokon, "
             "Debrecenben vasárnaponként. Alkalmanként vidéki akciók is vannak. Részletek: www.eteltazeletert.hu"
+        )
+
+    elif hasonlo(kerdes, ["budapest", "hol budapest", "bp hol", "bp hol van", "budapesti osztás"]):
+        return (
+            "Budapesten 5 helyszínen van ételosztás minden hétköznap:\n"
+            "• Népliget, Planetárium mögötti parkoló (12:00 – 13:00)\n"
+            "• Óbudai Rehabilitációs Központ, Benedek Elek utca 1–3 (11:30 – 12:00)\n"
+            "• Viziorgona utca 7., Óbuda (12:30 – 13:00)\n"
+            "• Rózsa utca 3., VII. kerület (12:00 – 12:45)\n"
+            "• Bosnyák utca 46., XIV. kerület (12:00 – 12:45)\n"
+            "Részletek: https://karitativ.hu/kapcsolat/"
+        )
+
+    elif hasonlo(kerdes, ["eger", "egerben hol", "eger mikor", "hol van egerben osztás"]):
+        return "Eger, Tűzoltó tér 5. – minden hétköznap 14:00 – 15:00 óra között."
+
+    elif hasonlo(kerdes, ["marcali", "somogy", "somogyvámos", "marcali mikor", "somogyban hol"]):
+        return (
+            "Marcali, Piac tér – hétfőtől csütörtökig 12:00 – 12:25,\n"
+            "péntekenként 13:00 – 13:25 között van osztás."
+        )
+
+    elif hasonlo(kerdes, ["debrecen", "debrecenben hol", "debrecen mikor", "hol van debrecenben osztás"]):
+        return (
+            "Debrecen, Magyari utca 2. (Govinda Étterem mellett) – vasárnaponként 12:00 – 13:00 óra között."
         )
 
     elif hasonlo(kerdes, ["hétvégén"]):
@@ -69,7 +88,7 @@ def valaszolo_bot(kerdes):
         return "18 év felett jogosult ételt felvenni, előzetes regisztrációval."
 
     elif "iskola" in kerdes and "önkéntes" in kerdes:
-        return "Igen, várjuk az iskolák önkéntes csatlakozását is! Részletek: www.karitativ.hu/https://karitativ.hu/hogyan-segithetsz/"
+        return "Igen, várjuk az iskolák önkéntes csatlakozását is! Részletek: www.karitativ.hu/hogyan-segithetsz/"
 
     elif hasonlo(kerdes, ["házi süti", "sütemény"]):
         return "Kérlek előzetesen vedd fel velünk a kapcsolatot. Kizárólag ellenőrzött élelmiszert osztunk."
@@ -138,6 +157,7 @@ def valaszolo_bot(kerdes):
         return (
             "Ezt még nem tudom biztosan. Írhatsz nekünk az info@karitativ.hu címre, vagy nézd meg a karitativ.hu oldalt!"
         )
+
 
 if __name__ == "__main__":
     print("Szia! Ételt az Életért chatbot vagyok. Miben segíthetek?")
