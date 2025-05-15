@@ -1,4 +1,2 @@
-flask
-requests
-fuzzywuzzy
-python-Levenshtein
+Flask==2.2.5
+gunicorn

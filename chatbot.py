@@ -13,7 +13,7 @@ def valaszolo_bot(kerdes):
 
     if hasonlo(kerdes, [
         "küldenétek", "küldjetek", "küldjetek nekem", "ide is küldjetek",
-        "miért nem küldtök", "nem kaptam", "hoznátok", "hozzatok",
+        "miért nem küldtök", "nem kaptam", "hoznátok", "hozzatok", 
         "küldjetek csomagot", "küldenétek csomagot", "csomagot szeretnék"
     ]):
         return (
@@ -43,7 +43,7 @@ def valaszolo_bot(kerdes):
         )
 
     elif hasonlo(kerdes, ["eger", "egerben hol", "eger mikor", "hol van egerben osztás"]):
-        return "Eger, Tűzoltó tér 5. – minden hétköznap 14:00 – 15:00 óra között."
+        return "Eger, Tűzoltó tér 5. – minden hétköznap 13:30 – 14:30 óra között."
 
     elif hasonlo(kerdes, ["marcali", "somogy", "somogyvámos", "marcali mikor", "somogyban hol"]):
         return (
