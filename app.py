@@ -1,8 +1,10 @@
 from flask import Flask, request
+from flask_cors import CORS
 import requests
 from chatbot import valaszolo_bot
 
 app = Flask(__name__)
+CORS(app, origins=["https://karitativ.hu"])
 
 import os
 VERIFY_TOKEN = os.environ.get("VERIFY_TOKEN", "lokalis_token")
