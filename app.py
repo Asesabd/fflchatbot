@@ -4,8 +4,9 @@ from chatbot import valaszolo_bot
 
 app = Flask(__name__)
 
-VERIFY_TOKEN = "asesa_verify_123"
-PAGE_ACCESS_TOKEN = "EAATXlHTQ8rEBOzoRsFiyVUkY4o9kOHjcOQtkHEqe6ZCGAaQss0ganywEFPIXZBiyIPXus45rLTMFi7SXWbOwJFsXskNLZBdOpFN8FSEYntU1UsTKiaMZAjEMpJpwUb0lHthWJ3DgJKhiQchYiYmFuYGrnhIJoVe203xINX1Bv0jF94zdDLAKXZBCOX7aWWL7jNSuG8rifUrsxSCkE"
+import os
+VERIFY_TOKEN = os.environ.get("VERIFY_TOKEN", "lokalis_token")
+PAGE_ACCESS_TOKEN = os.environ.get("PAGE_ACCESS_TOKEN", "lokalis_page_token")
 
 def send_message(recipient_id, message_text):
     url = "https://graph.facebook.com/v17.0/me/messages"
