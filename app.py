@@ -36,20 +36,30 @@ def webhook():
     data = request.get_json()
     print("KAPTUNK:", data)
 
+    response_text = "ok"
+
     try:
         for entry in data['entry']:
             for messaging_event in entry['messaging']:
                 if messaging_event.get('message'):
-                    sender_id = messaging_event['sender']['id']
+                    sender_id = messaging_event['sender'].get('id', '')
                     message_text = messaging_event['message'].get('text')
+
+                    print("Sender ID:", sender_id)  # <-- EZ LOGOL
+
                     if message_text:
                         valasz = valaszolo_bot(message_text)
                         print("Bot válasz:", valasz)
-                        send_message(sender_id, valasz)
+
+                        # ha nem szám az ID → webes kérés, küldjünk választ vissza
+                        if not sender_id.isdigit():
+                            response_text = valasz
+                        else:
+                            send_message(sender_id, valasz)
     except Exception as e:
         print("Hiba:", e)
 
-    return "ok", 200
+    return response_text, 200
 
 import os
 
