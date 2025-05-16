@@ -17,8 +17,8 @@ def valaszolo_bot(kerdes):
         "küldjetek csomagot", "küldenétek csomagot", "csomagot szeretnék"
     ]):
         return (
-            "Missziónk jelenleg az ételosztó pontokon való szolgáltatásra korlátozódik. "
-            "Nem tudunk csomagot küldeni vagy postázni. Tájékozódj itt: "
+            "Nagyon sajnáljuk, de jelenleg sajnos nem tudunk egyéni postázást vagy kiszállítást vállalni. Ételt csak a kijelölt osztópontokon tudunk biztosítani. Kérjük, nézd meg a hozzád legközelebbi lehetőséget! "
+            "Tájékozódj itt: "
             "https://www.elelmiszerbank.hu/hu/tevekenysegunk/hova_kerulnek_a_megmentett_elelmiszerek.html"
         )
 
@@ -68,7 +68,7 @@ def valaszolo_bot(kerdes):
         return "Az ételmennyiséget az illetékes családsegítő intézmény állapítja meg."
 
     elif hasonlo(kerdes, ["regisztrálni szeretnék", "hogyan regisztrálhatok", "regisztráció"]):
-        return "Igen, a kerületi családsegítőnél kell regisztrálni. Ők igazoló kártyát állítanak ki."
+        return "Örülünk, hogy szeretnél csatlakozni! 😊 A regisztráció a lakóhely szerinti családsegítő központnál történik, ahol egy igazolást állítanak ki számodra. Ha elakadsz, szívesen segítünk útbaigazítani"
 
     elif hasonlo(kerdes, ["elviheti helyettem", "másnak is elvihető", "átveheti más"]):
         return (
@@ -119,7 +119,7 @@ def valaszolo_bot(kerdes):
         )
 
     elif hasonlo(kerdes, ["önkéntes munka", "önkéntes lehetek", "segítenék"]):
-        return "Bővebben itt olvashatsz: www.karitativ.hu/hogyansegithetek"
+        return "Csatlakozz Te is több száz önkéntesünkhöz, akik nap mint nap emberséget, reményt és meleg ételt visznek a rászorulóknak. Nézd meg, hogyan tudsz bekapcsolódni:"
 
     elif hasonlo(kerdes, ["adomány", "milyen adomány"]):
         return (
@@ -132,7 +132,7 @@ def valaszolo_bot(kerdes):
         )
 
     elif hasonlo(kerdes, ["szuperek vagytok", "köszi", "köszönöm"]):
-        return "Köszönjük a kedvességed, igazán jól esik! :)"
+        return "Köszönjük a kedves visszajelzést! Minden jó szó megerősít bennünket abban, hogy érdemes folytatni."
 
     elif hasonlo(kerdes, ["jöttök", "nem jöttök", "kellene"]):
         return (
