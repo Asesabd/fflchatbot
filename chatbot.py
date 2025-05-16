@@ -23,7 +23,7 @@ def valaszolo_bot(kerdes):
         )
 
     elif hasonlo(kerdes, ["szia", "helló", "hello", "üdv", "jó napot", "jó reggelt"]):
-        return "Szia! Örülök, hogy írtál! Miben segíthetek?"
+        return "Szia! Az Ételt az Életért chatbot vagyok. Miben segíthetek?"
 
     elif hasonlo(kerdes, ["hol van osztás", "hol lesz osztás", "hol lehet ételhez jutni"]):
         return (
@@ -109,7 +109,7 @@ def valaszolo_bot(kerdes):
 
     elif hasonlo(kerdes, ["csomagban"]):
         return (
-            "A csomag 10–12 féle tartós élelmiszert tartalmaz, pl. étolaj, liszt, cukor, savanyúság, csoki, dió."
+            "A csomag 10–12 féle tartós élelmiszert tartalmaz, pl. étolaj, liszt, cukor, savanyúság, csoki, darált dió stb."
         )
 
     elif hasonlo(kerdes, ["meleg étel"]):
@@ -155,7 +155,7 @@ def valaszolo_bot(kerdes):
 
     else:
         return (
-            "Ezt még nem tudom biztosan. Írhatsz nekünk az info@karitativ.hu címre, vagy nézd meg a karitativ.hu oldalt!"
+            "Ezt még nem tudom biztosan. De már tanulom a jó válaszokat!"
         )
 
 
