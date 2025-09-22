@@ -1,110 +1,94 @@
 import difflib
 
-def valaszolo_bot(uzenet):
+# Ideiglenes "adatbázis": felhasználó állapotok (raszorulo vagy tamogato)
+felhasznalo_allapot = {}
+
+def valaszolo_bot(uzenet, user_id="default"):
     u = uzenet.lower().strip()
 
+    if user_id not in felhasznalo_allapot:
+        if any(k in u for k in ["rászoruló", "ételt kérek", "segítség kell"]):
+            felhasznalo_allapot[user_id] = "raszorulo"
+            return "✅ Rögzítettem, hogy rászorulóként érdeklődsz. Írd be a számot, ami érdekel:\n" + menu_raszorulo
+        elif any(k in u for k in ["segíteni", "támogatni", "adományozni"]):
+            felhasznalo_allapot[user_id] = "tamogato"
+            return "🙏 Köszönjük, hogy segítenél! Írd be a számot, ami érdekel:\n" + menu_tamogato
+        else:
+            return ("🙏 Köszönjük, hogy írtál!\n"
+                    "Kérlek válaszd ki, hogy miben segíthetünk:\n"
+                    "1️⃣ Rászoruló vagyok\n"
+                    "2️⃣ Segíteni szeretnék")
+
+    allapot = felhasznalo_allapot[user_id]
+
+    if allapot == "raszorulo":
+        return valasz_raszoruloknak(u)
+    elif allapot == "tamogato":
+        return valasz_tamogatoknak(u)
+
+    return "🤖 Hiba történt. Kérlek indítsd újra a beszélgetést."
+
+def valasz_raszoruloknak(u):
     temak = {
-        "udvozles": ["szia", "hello", "üdv", "jó napot", "jó reggelt"],
-        "etelosztas": ["1", "1.", "ételosztás", "osztás", "hol van osztás"],
-        "regisztracio": ["2", "2.", "regisztráció", "regisztrálni", "csatlakozás"],
-        "atvetel": ["3", "3.", "átvétel", "másnak is elvihető", "elviheti"],
-        "budapest": ["4", "4.", "budapest", "bp"],
-        "videk": ["5", "5.", "eger", "marcali", "debrecen", "vidék"],
-        "kiemelt": ["6", "6.", "kiemelt", "ünnepi", "nagy osztás", "következő nagy osztás", "extra ételosztás"],
-        "adomany": ["7", "7.", "adomány", "segítenék", "adakozás"],
-        "onkentes": ["8", "8.", "önkéntes", "önkéntesség"],
-        "csomagkeres": ["küldjetek csomagot", "küldenétek csomagot", "kapok csomagot", "küldenek?", "küldenétek?", "kaphatok csomagot", "küldenétek nekem is"],
-        "koszonet": ["köszi", "köszönöm", "szuperek vagytok", "hálás", "kössz", "kosz", "koszi", "kosi", "király", "szuper", "juhé", "nagyon jó"],
-        "kilepes": ["kilépés", "exit", "quit"]
+        "etelosztas": ["1", "ételosztás", "osztás", "hol van osztás"],
+        "regisztracio": ["2", "regisztráció"],
+        "atvetel": ["3", "átvétel"],
+        "helyszin": ["4", "budapest", "eger", "marcali", "debrecen", "vidék"],
+        "csomagkeres": ["5", "küldjetek csomagot", "elviheti"],
     }
-
     valaszok = {
-        "udvozles": (
-            "🙏 Üdvözöllek! Itt az Ételt az Életért chatbot. Miben segíthetek?\n"
-        ),
-        "etelosztas": (
-            "🍲 Ételt hétköznapokon osztunk Budapesten, Egerben, Marcaliban és környékén. Debrecenben vasárnap van osztás.\n"
-            "📍 Pontos helyszínekhez válaszd a 4-es vagy az 5-ös gombot."
-        ),
-        "regisztracio": (
-            "📝 Az ételosztáshoz regisztráció szükséges, melyet a lakóhely szerinti családsegítő központban lehet kérni."
-        ),
-        "atvetel": (
-            "✅ Igen, előzetes egyeztetéssel más is átveheti a csomagot. Érdemes a helyi kapcsolattartóval vagy segítővel előre egyeztetni."
-        ),
-        "budapest": (
-            "🏙️ Budapesti osztópontok hétköznapokon:\n"
-            "• Népliget (12:00)\n"
-            "• Óbuda, Benedek Elek utca\n"
-            "• Viziorgona utca 7.\n"
-            "• Rózsa utca 3.\n"
-            "• Bosnyák utca 46.\n"
-            "👉 Részletek: https://karitativ.hu/kapcsolat/"
-        ),
-        "videk": (
-            "🏡 Vidéki osztások:\n"
-            "• Eger – hétköznap 13:30–14:30\n"
-            "• Marcali – hétfőtől csütörtökig 12:00–12:25, péntek 13:00–13:25\n"
-            "• Debrecen – vasárnap 12:00–13:00"
-        ),
-        "kiemelt": (
-            "📅 A kiemelt, vagy ünnepi ételosztások időpontjáról a weboldalunkon és a Facebook-oldalunkon tájékozódhatsz majd előre.\n"
-            "👉 https://karitativ.hu"
-        ),
-        "adomany": (
-            "🙏 Háromféleképp segíthetsz: élelmiszerrel, tárgyi adománnyal vagy pénzzel.\n"
-            "👉 www.karitativ.hu"
-        ),
-        "onkentes": (
-            "💪 Szeretnél önkéntes lenni? Szuper! Töltsd ki az űrlapot itt:\n"
-            "👉 www.karitativ.hu/hogyan-segithetsz/"
-        ),
-        "csomagkeres": (
-            "📦 Missziónk jelenleg az ételosztó pontokon való szolgáltatásra korlátozódik. "
-            "Kapacitásunk sajnos nem teszi lehetővé, hogy élelmiszercsomagot küldjünk. "
-            "Kérlek keresd fel a lakóhelyed szerinti családsegítőt, vagy nézd meg ezt az oldalt:\n"
-            "👉 https://www.elelmiszerbank.hu/hu/tevekenysegunk/hova_kerulnek_a_megmentett_elelmiszerek.html"
-        ),
-        "koszonet": "😊 Örülök, ha segíthettem. Hálásak vagyunk minden jó szóért!",
-        "kilepes": "exit"
+        "etelosztas": "🍲 Ételt osztunk hétköznapokon... (részletes válasz)",
+        "regisztracio": "📝 Regisztráció a családsegítőnél történik.",
+        "atvetel": "✅ Más is átveheti egyeztetéssel.",
+        "helyszin": "📍 Budapest, Eger, Marcali, Debrecen... (részletek)",
+        "csomagkeres": "📦 Sajnos nem tudunk csomagot küldeni."
     }
+    return kulcsszo_alapu_valasz(u, temak, valaszok, menu_raszorulo)
 
-    menu = (
-        "\n\n📋 Válassz egy témát szám szerint:\n"
-        "1️⃣ Ételosztás időpontok és helyszínek\n"
-        "2️⃣ Regisztrációs tudnivalók\n"
-        "3️⃣ Átveheti-e más a csomagot?\n"
-        "4️⃣ Budapesti osztópontok\n"
-        "5️⃣ Vidéki osztások\n"
-        "6️⃣ Kiemelt ételosztás\n"
-        "7️⃣ Adományozás lehetőségei\n"
-        "8️⃣ Önkéntes munka"
-    )
+def valasz_tamogatoknak(u):
+    temak = {
+        "adomany": ["1", "adomány", "pénz", "támogatás"],
+        "etelfelajanlas": ["2", "élelmiszer", "étel adomány"],
+        "onkentes": ["3", "önkéntes"]
+    }
+    valaszok = {
+        "adomany": "💸 Köszönjük! Támogatás: www.karitativ.hu",
+        "etelfelajanlas": "🎁 Írj nekünk: info@karitativ.hu az adományról!",
+        "onkentes": "💪 Önkéntes űrlap: karitativ.hu/hogyan-segithetsz"
+    }
+    return kulcsszo_alapu_valasz(u, temak, valaszok, menu_tamogato)
 
-    visszakerdezes = (
-        "\n\n❓ Sikerült választ kapnod?\n"
-        "✉️ Ha nem, írj nekünk: info@karitativ.hu vagy hívj: +36 30 678 3217"
-    )
+def kulcsszo_alapu_valasz(u, temak, valaszok, menu):
+    for tema, kulcsok in temak.items():
+        for kulcs in kulcsok:
+            if kulcs in u or difflib.get_close_matches(u, [kulcs], n=1, cutoff=0.8):
+                return valaszok[tema] + "\n\n" + menu
+    return "❓ Ezt nem értettem. Kérlek válassz számot.\n" + menu
 
-    osszes_kulcsszo = [(tema, kulcsszo) for tema, kulcsok in temak.items() for kulcsszo in kulcsok]
+menu_raszorulo = (
+    "\n📋 Rászorulóknak választható menüpontok:\n"
+    "1️⃣ Ételosztás\n"
+    "2️⃣ Regisztráció\n"
+    "3️⃣ Átveheti más?\n"
+    "4️⃣ Osztópontok\n"
+    "5️⃣ Csomagküldés"
+)
 
-    for tema, kulcsszo in osszes_kulcsszo:
-        if kulcsszo in u or difflib.get_close_matches(u, [kulcsszo], n=1, cutoff=0.8):
-            valasz = valaszok.get(tema)
-            if valasz == "exit":
-                return "👋 Köszönjük a megkeresést. Viszlát!"
-            return valasz + visszakerdezes + menu
+menu_tamogato = (
+    "\n📋 Segítőknek választható menüpontok:\n"
+    "1️⃣ Pénzbeli támogatás\n"
+    "2️⃣ Tárgyi/étel adomány\n"
+    "3️⃣ Önkéntesség"
+)
 
-    return (
-        "❓ Ezt most nem értettem teljesen.\n"
-        "📋 Írd be a számot, ami érdekel:\n"
-        "1 – Ételosztás\n"
-        "2 – Regisztráció\n"
-        "3 – Átveheti más?\n"
-        "4 – Budapesti pontok\n"
-        "5 – Vidéki helyszínek\n"
-        "6 – Kiemelt ételosztás\n"
-        "7 – Adományozás\n"
-        "8 – Önkéntes segítség"
-    )
+# --- Lokális teszt
+if __name__ == "__main__":
+    print("Szia! Ételt az Életért chatbot vagyok. Írj valamit!")
+    while True:
+        beker = input("Te: ")
+        if beker.lower() in ["kilép", "exit", "bye"]:
+            print("Viszlát! 🌱")
+            break
+        valasz = valaszolo_bot(beker, user_id="teszt")
+        print("Bot:", valasz)
 
