@@ -26,7 +26,7 @@ def health():
     return "OK", 200
 
 
-def handle_verification():
+def _verify_get():
     verify_token = request.args.get("hub.verify_token")
     challenge = request.args.get("hub.challenge")
 
@@ -35,11 +35,10 @@ def handle_verification():
             return challenge or "", 200
         return "Invalid verification token", 403
 
-    # sima ping
     return "OK", 200
 
 
-def handle_webhook_post():
+def _handle_post():
     data = request.get_json() or {}
     print("📥 KAPTUNK:", data)
 
@@ -51,12 +50,9 @@ def handle_webhook_post():
                 message_text = (message.get("text") or "").strip()
 
                 if message_text and sender_id:
-                    print("👤 Feladó:", sender_id)
-
-                    # állapot per user
-                    if not hasattr(handle_webhook_post, "states"):
-                        handle_webhook_post.states = {}
-                    state = handle_webhook_post.states.setdefault(sender_id, {"ag": None})
+                    if not hasattr(_handle_post, "states"):
+                        _handle_post.states = {}
+                    state = _handle_post.states.setdefault(sender_id, {"ag": None})
 
                     valasz = valaszolo_bot(message_text, state)
                     print("🤖 Válasz:", valasz)
@@ -70,24 +66,24 @@ def handle_webhook_post():
     return "ok", 200
 
 
-# ✅ FACEBOOK CALLBACK ROOTON
+# ✅ Root
 @app.route("/", methods=["GET"])
 def root_get():
-    return handle_verification()
+    return _verify_get()
 
 @app.route("/", methods=["POST"])
 def root_post():
-    return handle_webhook_post()
+    return _handle_post()
 
 
-# ✅ OPCIONÁLIS: ha később mégis engednék /webhook-kal
+# ✅ Webhook path (Facebook most ezt hívja nálad!)
 @app.route("/webhook", methods=["GET"])
 def webhook_get():
-    return handle_verification()
+    return _verify_get()
 
 @app.route("/webhook", methods=["POST"])
 def webhook_post():
-    return handle_webhook_post()
+    return _handle_post()
 
 
 if __name__ == "__main__":
