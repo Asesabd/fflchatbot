@@ -2,6 +2,7 @@ from flask import Flask, request
 from flask_cors import CORS
 import requests
 import os
+
 from valaszolo_bot import valaszolo_bot
 
 app = Flask(__name__)
@@ -24,17 +25,30 @@ def send_message(recipient_id, message_text):
     response = requests.post(url, params=params, headers=headers, json=data)
     print("Válasz elküldve:", response.status_code, response.text)
 
-# ✅ Facebook webhook hitelesítés (GET)
+# ✅ Render / uptime / ellenőrző endpoint
+@app.route("/health", methods=["GET"])
+def health():
+    return "OK", 200
+
+# ✅ Facebook webhook hitelesítés (GET) + Render root ping (GET / paraméter nélkül)
 @app.route("/", methods=["GET"])
 def webhook_verification():
-    if request.args.get("hub.verify_token") == VERIFY_TOKEN:
-        return request.args.get("hub.challenge")
-    return "Invalid verification token", 403
+    # Facebook verify hívás query paraméterekkel
+    verify_token = request.args.get("hub.verify_token")
+    challenge = request.args.get("hub.challenge")
+
+    if verify_token is not None:
+        if verify_token == VERIFY_TOKEN:
+            return challenge or "", 200
+        return "Invalid verification token", 403
+
+    # Render / böngésző sima ping (paraméter nélkül)
+    return "OK", 200
 
 # 💬 Üzenet fogadás és válasz (POST)
 @app.route("/", methods=["POST"])
 def webhook():
-    data = request.get_json()
+    data = request.get_json() or {}
     print("📥 KAPTUNK:", data)
 
     try:
@@ -42,22 +56,29 @@ def webhook():
             for event in entry.get("messaging", []):
                 sender_id = event.get("sender", {}).get("id", "")
                 message = event.get("message", {})
-                message_text = message.get("text", "").strip()
+                message_text = (message.get("text") or "").strip()
 
-                if message_text:
+                if message_text and sender_id:
                     print("👤 Feladó:", sender_id)
-                    valasz = valaszolo_bot(message_text)
+
+                    # ⚠️ fontos: legyen állapot per user
+                    # (Messengerben egyszerre sok user van; különben összekeverednek)
+                    if not hasattr(webhook, "states"):
+                        webhook.states = {}
+                    state = webhook.states.setdefault(sender_id, {"ag": None})
+
+                    valasz = valaszolo_bot(message_text, state)
                     print("🤖 Válasz:", valasz)
 
-                    # Csak akkor küldj vissza, ha nem "exit" a válasz
-                    if valasz != "exit":
+                    if valasz and valasz != "exit":
                         send_message(sender_id, valasz)
+
     except Exception as e:
         print("❌ Hiba:", e)
 
     return "ok", 200
 
-# 🚀 Lokális futtatás
+# 🚀 Lokális futtatás (Render gunicorn alatt ezt nem használja)
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5050))
     app.run(host="0.0.0.0", port=port)
